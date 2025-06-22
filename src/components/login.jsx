@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,9 +25,7 @@ export default function Login() {
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
@@ -34,7 +41,12 @@ export default function Login() {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        navigate("/main"); // redireciona após login com sucesso
+        if (remember) {
+          localStorage.setItem("rememberedEmail", email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
+        navigate("/main");
       } else {
         setError("Login realizado, mas token não encontrado na resposta");
       }
@@ -53,10 +65,7 @@ export default function Login() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-gray-300 mb-1 font-semibold"
-            >
+            <label htmlFor="email" className="block text-gray-300 mb-1 font-semibold">
               Email
             </label>
             <input
@@ -71,10 +80,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-gray-300 mb-1 font-semibold"
-            >
+            <label htmlFor="password" className="block text-gray-300 mb-1 font-semibold">
               Senha
             </label>
             <input
@@ -86,6 +92,19 @@ export default function Login() {
               placeholder="Digite sua senha"
               className="w-full px-4 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-700"
             />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="remember"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="mr-2 accent-green-700"
+            />
+            <label htmlFor="remember" className="text-sm text-gray-300">
+              Lembrar login
+            </label>
           </div>
 
           {error && (
@@ -103,10 +122,7 @@ export default function Login() {
 
         <p className="mt-6 text-center text-gray-400">
           Primeiro acesso?{" "}
-          <Link
-            to="/register"
-            className="text-green-700 hover:underline font-semibold"
-          >
+          <Link to="/register" className="text-green-700 hover:underline font-semibold">
             Cadastre-se
           </Link>
         </p>
