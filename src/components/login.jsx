@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +34,14 @@ export default function Login() {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        alert("Login realizado com sucesso!");
+        navigate("/main"); // redireciona após login com sucesso
       } else {
-        alert("Login realizado, mas token não encontrado na resposta");
+        setError("Login realizado, mas token não encontrado na resposta");
       }
     } catch (err) {
-        console.error("Erro no fetch:", err);  // <---- aqui
-        setError("Erro de conexão com o servidor");
-        setLoading(false);
+      console.error("Erro no fetch:", err);
+      setError("Erro de conexão com o servidor");
+      setLoading(false);
     }
   };
 
@@ -101,13 +102,13 @@ export default function Login() {
         </form>
 
         <p className="mt-6 text-center text-gray-400">
-        Primeiro acesso?{" "}
-        <Link
+          Primeiro acesso?{" "}
+          <Link
             to="/register"
             className="text-green-700 hover:underline font-semibold"
-        >
+          >
             Cadastre-se
-        </Link>
+          </Link>
         </p>
       </div>
     </div>
