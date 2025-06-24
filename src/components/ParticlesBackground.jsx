@@ -20,10 +20,10 @@ const ParticlesBackground = React.memo(() => {
             modes: { repulse: { distance: 100, duration: 0.4 } },
             },
             particles: {
-            color: { value: "#00f778" },
+            color: { value: "#00FFFF" },
             links: {
                 enable: true,
-                color: "#00f778",
+                color: "#00FFFF",
                 distance: 150,
                 opacity: 0.4,
                 width: 1,

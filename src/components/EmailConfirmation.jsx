@@ -45,60 +45,60 @@ export default function EmailConfirmation({ email, onBackToLogin }) {
   }, [success, onBackToLogin]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <h2 className="text-2xl font-bold text-white text-center mb-6 drop-shadow">
-        Confirme seu email
-      </h2>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <h2 className="text-2xl font-bold text-white text-center mb-6 drop-shadow">
+      Confirme seu email
+    </h2>
 
-      {success ? (
-        <div className="text-green-400 text-center">
-          <p>Email confirmado com sucesso!</p>
-          <p className="text-sm text-gray-300 mt-1">Redirecionando para o login...</p>
-          <button
-            onClick={onBackToLogin}
-            className="mt-4 text-green-300 underline hover:text-green-200"
-          >
-            Ir agora
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleConfirm} className="space-y-5">
-          <p className="text-gray-300 text-sm text-center">
-            Digite o código de 6 dígitos enviado para <strong>{email}</strong>
-          </p>
+    {success ? (
+      <div className="text-cyan-400 text-center">
+        <p>Email confirmado com sucesso!</p>
+        <p className="text-sm text-gray-300 mt-1">Redirecionando para o login...</p>
+        <button
+          onClick={onBackToLogin}
+          className="mt-4 text-cyan-300 underline hover:text-cyan-200"
+        >
+          Ir agora
+        </button>
+      </div>
+    ) : (
+      <form onSubmit={handleConfirm} className="space-y-5">
+        <p className="text-gray-300 text-sm text-center">
+          Digite o código de 6 dígitos enviado para <strong>{email}</strong>
+        </p>
 
-          <input
-            type="text"
-            required
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Código de verificação"
-            className="w-full px-4 py-2 rounded-lg bg-white/20 text-white border border-white/30 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
+        <input
+          type="text"
+          required
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Código de verificação"
+          className="w-full px-4 py-2 rounded-lg bg-white/20 text-white border border-white/30 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-600"
+        />
 
-          {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
+        {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 text-white font-bold rounded-lg transition-all duration-300 disabled:opacity-50 shadow-lg"
-          >
-            {loading ? "Confirmando..." : "Confirmar"}
-          </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-2 bg-gradient-to-r from-[#0891B2] to-[#06B6D4] hover:from-[#0e7490] hover:to-[#22d3ee] text-white font-bold rounded-lg transition-all duration-300 disabled:opacity-50 shadow-lg"
+        >
+          {loading ? "Confirmando..." : "Confirmar"}
+        </button>
 
-          <button
-            type="button"
-            onClick={onBackToLogin}
-            className="w-full text-sm text-gray-300 underline mt-4"
-          >
-            Voltar para o login
-          </button>
-        </form>
-      )}
-    </motion.div>
-  );
+        <button
+          type="button"
+          onClick={onBackToLogin}
+          className="w-full text-sm text-gray-300 underline mt-4"
+        >
+          Voltar para o login
+        </button>
+      </form>
+    )}
+  </motion.div>
+);
 }
