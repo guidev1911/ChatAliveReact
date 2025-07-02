@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# 🗨️Chat Alive - Plataforma web de comunicação
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+-Em desenvolvimento...
 
-## Available Scripts
+-Backend JavaSpring para todo esse funcionamento a seguir
 
-In the project directory, you can run:
+-Para mais detalhes do projeto: [projeto no linkedin](https://www.linkedin.com/in/guilherme-brito-souza-santos-49766329b/details/projects/)
 
-### `npm start`
+-Ou minha publicação no linkedin com video desse cadastro em funcionamento: [minha publicação no linkedin](https://www.linkedin.com/posts/guilherme-brito-souza-santos-49766329b_java-react-springboot-activity-7343464169960005632-JsJf?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEiItPMBGZ6MFmADAKDc1INgrMrxiTEvHkg)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Cadastro
+onde o usuário coloca seus dados para criar uma conta no chatAlive e começar a criar grupos e conversar
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![cadastro](src/assets/cadastro.png)
 
-### `npm test`
+# Confirmar código 
+Em seguida pede para inserir o código de confirmação recebido por email
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![cadastro](src/assets/codigoCadastro.png)
 
-### `npm run build`
+# Email de confirmação
+Email com código de confirmação formatado em html recebido pelo usuário 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![cadastro](src/assets/emailConfirmacao.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Entrar
+Tudo certo com seu cadastro logo poderá fazer login normalmente e acessar nossa plataforma
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![cadastro](src/assets/login.png)
 
-### `npm run eject`
+# Esqueceu a senha?
+onde o usuário coloca seu email e pede para redefinir a senha caso tenha esquecido
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+![cadastro](src/assets/redefinicaoSenha.png)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Email com código para redefinir senha
+Email que o usuário recebe para redefinir senha
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+![cadastro](src/assets/emailRedefinicao.png)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Definir nova senha
+Onde o usuário coloca o código recebido e a nova senha
 
-## Learn More
+![cadastro](src/assets/novaSenha.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
