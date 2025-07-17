@@ -4,8 +4,13 @@ export default function Main() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editPhoto, setEditPhoto] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const backendUrl = "http://localhost:8080"; 
+  const backendUrl = "http://localhost:8080";
 
   useEffect(() => {
     async function fetchProfile() {
@@ -17,7 +22,7 @@ export default function Main() {
       }
 
       try {
-        const response = await fetch(`${backendUrl}/user/profile/get`, { 
+        const response = await fetch(`${backendUrl}/user/profile/get`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -29,6 +34,8 @@ export default function Main() {
 
         const data = await response.json();
         setUser(data);
+        setEditName(data.name);
+        setEditBio(data.bio);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -38,6 +45,46 @@ export default function Main() {
 
     fetchProfile();
   }, []);
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const formData = new FormData();
+    if (editName) formData.append("name", editName);
+    if (editBio) formData.append("bio", editBio);
+    if (editPhoto) formData.append("photoFile", editPhoto);
+
+    try {
+      const response = await fetch(`${backendUrl}/user/profile/edit`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar perfil");
+      }
+
+      setSuccessMessage("Perfil atualizado com sucesso");
+      setIsEditing(false);
+
+      // Recarrega perfil atualizado
+      const profileRes = await fetch(`${backendUrl}/user/profile/get`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const updatedData = await profileRes.json();
+      setUser(updatedData);
+      setEditName(updatedData.name);
+      setEditBio(updatedData.bio);
+      setEditPhoto(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   if (loading) {
     return (
@@ -64,21 +111,68 @@ export default function Main() {
         {/* Foto de perfil */}
         <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
           <img
-            src={`${backendUrl}${user.photoUrl}`} 
+            src={
+              editPhoto
+                ? URL.createObjectURL(editPhoto)
+                : `${backendUrl}${user.photoUrl}`
+            }
             alt="Foto do usuário"
             className="w-full h-full object-cover"
           />
         </div>
 
-        {/* Nome do usuário */}
-        <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
+        {isEditing ? (
+          <>
+            <input
+              type="file"
+              onChange={(e) => setEditPhoto(e.target.files[0])}
+              className="mb-2 text-sm"
+            />
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="mb-2 px-2 py-1 rounded bg-[#0f4c5c] text-white w-full"
+              placeholder="Nome"
+            />
+            <textarea
+              value={editBio}
+              onChange={(e) => setEditBio(e.target.value)}
+              className="px-2 py-1 rounded bg-[#0f4c5c] text-white w-full"
+              rows={3}
+              placeholder="Bio"
+            />
+            <button
+              onClick={handleSave}
+              className="mt-4 px-4 py-1 bg-green-600 rounded hover:bg-green-700"
+            >
+              Salvar
+            </button>
+            <button
+              onClick={() => setIsEditing(false)}
+              className="mt-2 text-sm text-red-400 hover:text-red-500"
+            >
+              Cancelar
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Nome do usuário */}
+            <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
+            {/* Bio */}
+            <p className="text-sm text-gray-400 text-center px-4">{user.bio}</p>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="mt-4 px-3 py-1 bg-cyan-600 rounded hover:bg-cyan-700"
+            >
+              Editar perfil
+            </button>
+          </>
+        )}
 
-        {/* Bio */}
-        <p className="text-sm text-gray-400 text-center px-4">{user.bio}</p>
-
-        <div className="mt-10 text-sm text-gray-500">
-          Você está conectado.
-        </div>
+        {successMessage && (
+          <p className="mt-4 text-green-400 text-sm">{successMessage}</p>
+        )}
       </aside>
 
       {/* Área principal */}
