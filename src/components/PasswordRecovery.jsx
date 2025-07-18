@@ -25,7 +25,7 @@ export default function PasswordRecovery({ onBackToLogin }) {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:8080/password-reset/request", {
+      const response = await fetch("http://192.168.0.11:8080/password-reset/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -58,7 +58,7 @@ export default function PasswordRecovery({ onBackToLogin }) {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/password-reset/confirm", {
+      const response = await fetch("http://192.168.0.11:8080/password-reset/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code, newPassword }),

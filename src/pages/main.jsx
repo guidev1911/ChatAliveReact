@@ -8,7 +8,7 @@ export default function Main() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const backendUrl = "http://localhost:8080";
+  const backendUrl = "http://192.168.0.11:8080";
 
   useEffect(() => {
     async function fetchProfile() {

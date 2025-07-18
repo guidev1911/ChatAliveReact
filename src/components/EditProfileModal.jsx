@@ -6,7 +6,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onProfileUpdat
   const [bio, setBio] = useState(user?.bio || "");
   const [photoFile, setPhotoFile] = useState(null);
 
-  const backendUrl = "http://localhost:8080";
+  const backendUrl = "http://192.168.0.11:8080";
 
   useEffect(() => {
     setName(user?.name || "");
@@ -58,11 +58,13 @@ export default function EditProfileModal({ isOpen, onClose, user, onProfileUpdat
           <div>
             <label className="block text-sm text-gray-300">Nome</label>
             <input
-              className="w-full p-2 rounded-md bg-[#0f4c5c] text-white border border-cyan-700 focus:outline-none"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+                className="w-full p-2 rounded-md bg-[#0f4c5c] text-white border border-cyan-700 focus:outline-none"
+                type="text"
+                maxLength={32}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
+            <div className="text-sm text-gray-400 text-right mt-1">{name.length}/32</div>
           </div>
 
           <div>

@@ -13,7 +13,7 @@ export default function EmailConfirmation({ email, onBackToLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/auth/confirm", {
+      const response = await fetch("http://192.168.0.11:8080/auth/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code }),
