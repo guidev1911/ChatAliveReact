@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
-import EditProfileModal from "../components/EditProfileModal";
+import EditProfileModal from "../components/EditProfileModal";  
 
 export default function Main() {
   const [user, setUser] = useState(null);

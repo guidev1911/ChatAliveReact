@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}"
@@ -18,6 +19,13 @@ module.exports = {
             opacity: 1,
           },
         },
+      },
+      height: {
+        safe: '100svh', 
+      },
+      padding: {
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
       },
     },
   },
