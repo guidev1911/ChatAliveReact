@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
-import EditProfileModal from "../components/EditProfileModal";  
+import { GearIcon, PersonIcon, DotsHorizontalIcon } from "@radix-ui/react-icons"; // Importei DotsHorizontalIcon
+import EditProfileModal from "../components/EditProfileModal";
 
 export default function Main() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const backendUrl = "http://192.168.0.11:8080";
 
@@ -57,9 +58,34 @@ export default function Main() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#0f4c5c] text-gray-100">
+    <div className="min-h-screen flex bg-[#0f4c5c] text-gray-100 relative">
+      {/* Botão para abrir/fechar sidebar no mobile */}
+      <button
+        onClick={() => setSidebarOpen((open) => !open)}
+        className="md:hidden fixed top-4 left-4 z-50 bg-[#083344] p-2 rounded-md text-cyan-400 hover:text-cyan-300 shadow-lg"
+        aria-label="Abrir menu lateral"
+      >
+        <DotsHorizontalIcon className="w-6 h-6" />
+      </button>
+
+      {/* Overlay semi-transparente quando sidebar aberta no mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-80 bg-[#083344] p-6 flex flex-col border-r border-cyan-700 shadow-lg items-center relative">
+      <aside
+        className={`
+          fixed top-0 left-0 bottom-0 z-50 w-64 bg-[#083344] p-6 flex flex-col border-r border-cyan-700 shadow-lg items-center
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 md:relative md:w-80
+        `}
+      >
         <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
 
         <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
@@ -98,7 +124,7 @@ export default function Main() {
       </aside>
 
       {/* Área principal */}
-      <main className="flex-1 p-10 bg-[#0a2a32]">
+      <main className="flex-1 p-10 bg-[#0a2a32] ml-0 md:ml-80">
         <div className="w-full h-full rounded-lg border-2 border-dashed border-cyan-800 flex items-center justify-center text-gray-400">
           Em breve: grupos, mensagens, busca e mais!
         </div>
