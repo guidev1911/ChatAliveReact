@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { GearIcon, PersonIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import EditProfileModal from "../components/EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
+import CreateGroupModal from "../components/CreateGroupModal";
 
 export default function Main() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Controle da sidebar no mobile
+  const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const backendUrl = "http://192.168.0.11:8080";
@@ -116,13 +116,14 @@ export default function Main() {
       <AnimatePresence>
         {sidebarOpen && (
           <>
-            {/* Overlay sem onClick */}
+            {/* Overlay que fecha o perfil quando clicado */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.3 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black z-40 md:hidden"
               aria-hidden="true"
+              onClick={() => setSidebarOpen(false)} 
             />
 
             {/* Sidebar deslizante */}
@@ -163,7 +164,6 @@ export default function Main() {
               <button
                 onClick={() => {
                   setIsModalOpen(true);
-                  setSidebarOpen(false);
                 }}
                 className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
                 aria-label="Editar perfil"
@@ -187,14 +187,32 @@ export default function Main() {
 
       {/* Conteúdo principal */}
       <main
-        className={`flex-1 p-10 bg-[#0a2a32] transition-all duration-300 ${
+        className={`flex-1 p-10 bg-white transition-all duration-300 ${
           sidebarOpen ? "opacity-50 pointer-events-none md:opacity-100 md:pointer-events-auto" : ""
         }`}
       >
-        <div className="w-full h-full rounded-lg border-2 border-dashed border-cyan-800 flex items-center justify-center text-gray-400">
-          Em breve: grupos, mensagens, busca e mais!
+        <div className="w-full h-full rounded-lg border-2 border-dashed border-cyan-800 flex flex-col items-center justify-center gap-6 text-gray-600">
+          <p className="text-lg font-medium">Bem-vindo ao ChatAlive 🚀</p>
+
+          <button
+            onClick={() => setIsCreateGroupOpen(true)} 
+            className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-lg transition"
+          >
+            ➕ Criar Grupo
+          </button>
+
+          <p className="text-sm text-gray-400">
+            Em breve: grupos, mensagens, busca e muito mais!
+          </p>
         </div>
       </main>
+
+
+      {/* Modal para criar grupos */}
+      <CreateGroupModal
+        isOpen={isCreateGroupOpen}
+        onClose={() => setIsCreateGroupOpen(false)}
+      />
 
       {/* Modal de edição de perfil */}
       <EditProfileModal
