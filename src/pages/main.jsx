@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { GearIcon, PersonIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import EditProfileModal from "../components/EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import CreateGroupModal from "../components/CreateGroupModal";
+import MobileSidebarButton from "../components/sideBar/MobileSidebarButton";
+import DesktopSidebar from "../components/sideBar/DesktopSidebar";
+import MobileSidebar from "../components/sideBar/MobileSidebar";
 
 export default function Main() {
   const [user, setUser] = useState(null);
@@ -11,7 +13,7 @@ export default function Main() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("explorar"); // explorar | meus | amigos
+  const [activeTab, setActiveTab] = useState("explorar"); 
   const [groups, setGroups] = useState([]);
 
   const backendUrl = "http://192.168.0.11:8080";
@@ -88,115 +90,25 @@ export default function Main() {
 
   return (
     <div className="min-h-screen flex bg-[#0f4c5c] text-gray-100 relative">
-      {/* Botão mobile para abrir sidebar */}
-      <button
-        onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-60 md:hidden p-2 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white shadow-lg"
-        aria-label="Abrir perfil"
-        title="Abrir perfil"
-      >
-        <DotsHorizontalIcon className="w-6 h-6" />
-      </button>
+
+      {/* Botão mobile */}
+      <MobileSidebarButton onClick={() => setSidebarOpen(true)} />
 
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-80 bg-[#083344] p-6 flex-col border-r border-cyan-700 shadow-lg items-center relative z-50">
-        <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
-        <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
-          <img
-            src={`${backendUrl}${user.photoUrl}`}
-            alt="Foto do usuário"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
-        <p className="text-sm text-gray-400 text-center px-4 break-words whitespace-pre-wrap max-w-[260px]">
-          {user.bio}
-        </p>
-        <div className="mt-10 text-sm text-gray-500">Você está conectado.</div>
-
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
-          aria-label="Editar perfil"
-          title="Editar perfil"
-        >
-          <PersonIcon className="w-6 h-6" />
-        </button>
-
-        <button
-          className="absolute bottom-4 left-4 text-cyan-400 opacity-50 cursor-default"
-          aria-label="Configurações"
-          title="Configurações (sem ação)"
-          tabIndex={-1}
-        >
-          <GearIcon className="w-6 h-6" />
-        </button>
-      </aside>
+      <DesktopSidebar 
+        user={user} 
+        backendUrl={backendUrl} 
+        onEdit={() => setIsModalOpen(true)} 
+      />
 
       {/* Sidebar mobile animada */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black z-40 md:hidden"
-              aria-hidden="true"
-              onClick={() => setSidebarOpen(false)}
-            />
-
-            <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed top-0 left-0 bottom-0 w-72 bg-[#083344] p-6 flex flex-col border-r border-cyan-700 shadow-lg items-center z-50 md:hidden"
-            >
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="self-end mb-4 text-cyan-400 hover:text-cyan-300"
-                aria-label="Fechar perfil"
-                title="Fechar perfil"
-              >
-                ✕
-              </button>
-
-              <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
-              <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
-                <img
-                  src={`${backendUrl}${user.photoUrl}`}
-                  alt="Foto do usuário"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
-              <p className="text-sm text-gray-400 text-center px-4 break-words whitespace-pre-wrap max-w-[260px]">
-                {user.bio}
-              </p>
-              <div className="mt-10 text-sm text-gray-500">Você está conectado.</div>
-
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
-                aria-label="Editar perfil"
-                title="Editar perfil"
-              >
-                <PersonIcon className="w-6 h-6" />
-              </button>
-
-              <button
-                className="absolute bottom-4 left-4 text-cyan-400 opacity-50 cursor-default"
-                aria-label="Configurações"
-                title="Configurações (sem ação)"
-                tabIndex={-1}
-              >
-                <GearIcon className="w-6 h-6" />
-              </button>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      <MobileSidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+        user={user} 
+        backendUrl={backendUrl} 
+        onEdit={() => setIsModalOpen(true)} 
+      />
 
       {/* Conteúdo principal */}
         <main className="flex-1 p-6 md:p-10 bg-white transition-all duration-300">
