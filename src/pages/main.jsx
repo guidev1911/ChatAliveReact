@@ -11,6 +11,8 @@ export default function Main() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("explorar"); // explorar | meus | amigos
+  const [groups, setGroups] = useState([]);
 
   const backendUrl = "http://192.168.0.11:8080";
 
@@ -44,6 +46,30 @@ export default function Main() {
     fetchProfile();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === "explorar") {
+      async function fetchGroups() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        try {
+          const response = await fetch(`${backendUrl}/groups`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) throw new Error("Falha ao carregar grupos");
+          const data = await response.json();
+          setGroups(data.content || []);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      fetchGroups();
+    }
+  }, [activeTab]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0f4c5c] text-gray-100">
@@ -62,7 +88,6 @@ export default function Main() {
 
   return (
     <div className="min-h-screen flex bg-[#0f4c5c] text-gray-100 relative">
-
       {/* Botão mobile para abrir sidebar */}
       <button
         onClick={() => setSidebarOpen(true)}
@@ -73,10 +98,9 @@ export default function Main() {
         <DotsHorizontalIcon className="w-6 h-6" />
       </button>
 
-      {/* Sidebar desktop fixa */}
+      {/* Sidebar desktop */}
       <aside className="hidden md:flex w-80 bg-[#083344] p-6 flex-col border-r border-cyan-700 shadow-lg items-center relative z-50">
         <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
-
         <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
           <img
             src={`${backendUrl}${user.photoUrl}`}
@@ -84,13 +108,10 @@ export default function Main() {
             className="w-full h-full object-cover"
           />
         </div>
-
         <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
-
         <p className="text-sm text-gray-400 text-center px-4 break-words whitespace-pre-wrap max-w-[260px]">
           {user.bio}
         </p>
-
         <div className="mt-10 text-sm text-gray-500">Você está conectado.</div>
 
         <button
@@ -116,17 +137,15 @@ export default function Main() {
       <AnimatePresence>
         {sidebarOpen && (
           <>
-            {/* Overlay que fecha o perfil quando clicado */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.3 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black z-40 md:hidden"
               aria-hidden="true"
-              onClick={() => setSidebarOpen(false)} 
+              onClick={() => setSidebarOpen(false)}
             />
 
-            {/* Sidebar deslizante */}
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
@@ -144,7 +163,6 @@ export default function Main() {
               </button>
 
               <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
-
               <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-4">
                 <img
                   src={`${backendUrl}${user.photoUrl}`}
@@ -152,19 +170,14 @@ export default function Main() {
                   className="w-full h-full object-cover"
                 />
               </div>
-
               <h2 className="text-xl font-semibold mb-2">{user.name}</h2>
-
               <p className="text-sm text-gray-400 text-center px-4 break-words whitespace-pre-wrap max-w-[260px]">
                 {user.bio}
               </p>
-
               <div className="mt-10 text-sm text-gray-500">Você está conectado.</div>
 
               <button
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
+                onClick={() => setIsModalOpen(true)}
                 className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
                 aria-label="Editar perfil"
                 title="Editar perfil"
@@ -186,35 +199,96 @@ export default function Main() {
       </AnimatePresence>
 
       {/* Conteúdo principal */}
-      <main
-        className={`flex-1 p-10 bg-white transition-all duration-300 ${
-          sidebarOpen ? "opacity-50 pointer-events-none md:opacity-100 md:pointer-events-auto" : ""
-        }`}
-      >
-        <div className="w-full h-full rounded-lg border-2 border-dashed border-cyan-800 flex flex-col items-center justify-center gap-6 text-gray-600">
-          <p className="text-lg font-medium">Bem-vindo ao ChatAlive 🚀</p>
+        <main className="flex-1 p-6 md:p-10 bg-white transition-all duration-300">
+          {/* Menu de abas com animação de underline */}
+          <div className="flex justify-center gap-8 mb-6 border-b border-gray-300 pb-2 relative">
+            {["explorar", "meus", "amigos"].map((tab) => (
+              <button
+                key={tab}
+                className={`relative text-gray-700 font-semibold px-2 py-1 transition-all duration-300 ${
+                  activeTab === tab ? "text-cyan-600" : "hover:text-cyan-500"
+                }`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
+                  animate={{ opacity: activeTab === tab ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </button>
+            ))}
+          </div>
 
-          <button
-            onClick={() => setIsCreateGroupOpen(true)} 
-            className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-lg transition"
-          >
-            ➕ Criar Grupo
-          </button>
+          {/* Conteúdo das abas animado */}
+          <div className="w-full h-full relative min-h-[300px]">
+            <AnimatePresence mode="wait">
+              {activeTab === "explorar" && (
+                <motion.div
+                  key="explorar"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                >
+                  {groups.map((group) => (
+                    <motion.div
+                      key={group.id}
+                      className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white"
+                      whileHover={{ scale: 1.03 }}
+                    >
+                      <h3 className="font-bold text-lg text-cyan-600">{group.name}</h3>
+                      <p className="text-gray-600 text-sm">{group.description}</p>
+                      <p className="text-gray-400 text-xs mt-2">Privacidade: {group.privacy}</p>
+                      <p className="text-gray-400 text-xs mt-1">Criador: {group.creator.name}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
 
-          <p className="text-sm text-gray-400">
-            Em breve: grupos, mensagens, busca e muito mais!
-          </p>
-        </div>
-      </main>
+              {activeTab === "meus" && (
+                <motion.div
+                  key="meus"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-col items-center justify-center gap-6"
+                >
+                  <button
+                    onClick={() => setIsCreateGroupOpen(true)}
+                    className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-lg transition"
+                  >
+                    ➕ Criar Grupo
+                  </button>
+                  <p className="text-gray-500 text-sm mt-2">Você ainda não entrou em nenhum grupo.</p>
+                </motion.div>
+              )}
 
+              {activeTab === "amigos" && (
+                <motion.div
+                  key="amigos"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-col items-center justify-center gap-6"
+                >
+                  <p className="text-gray-500 text-sm mt-2">Seus amigos aparecerão aqui em breve.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </main>
 
-      {/* Modal para criar grupos */}
+      {/* Modais */}
       <CreateGroupModal
         isOpen={isCreateGroupOpen}
         onClose={() => setIsCreateGroupOpen(false)}
       />
 
-      {/* Modal de edição de perfil */}
       <EditProfileModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -224,3 +298,5 @@ export default function Main() {
     </div>
   );
 }
+
+
