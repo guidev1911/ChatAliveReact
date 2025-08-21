@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import EditProfileModal from "../components/EditProfileModal";
+import EditProfileModal from "../components/profile/EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
-import CreateGroupModal from "../components/CreateGroupModal";
+import CreateGroupModal from "../components/group/CreateGroupModal";
 import MobileSidebarButton from "../components/sideBar/MobileSidebarButton";
 import DesktopSidebar from "../components/sideBar/DesktopSidebar";
 import MobileSidebar from "../components/sideBar/MobileSidebar";
@@ -113,24 +113,26 @@ export default function Main() {
       {/* Conteúdo principal */}
         <main className="flex-1 p-6 md:p-10 bg-white transition-all duration-300">
           {/* Menu de abas com animação de underline */}
-          <div className="flex justify-center gap-8 mb-6 border-b border-gray-300 pb-2 relative">
-            {["explorar", "meus", "amigos"].map((tab) => (
-              <button
-                key={tab}
-                className={`relative text-gray-700 font-semibold px-2 py-1 transition-all duration-300 ${
-                  activeTab === tab ? "text-cyan-600" : "hover:text-cyan-500"
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
-                <motion.div
-                  layoutId="underline"
-                  className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
-                  animate={{ opacity: activeTab === tab ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </button>
-            ))}
+          <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-300 shadow-sm mb-6">
+            <div className="flex justify-center gap-2 sm:gap-8 py-3 relative">
+              {["explorar", "meus", "amigos"].map((tab) => (
+                <button
+                  key={tab}
+                  className={`relative text-sm sm:text-base font-semibold px-2 py-1 transition-all duration-300 ${
+                    activeTab === tab ? "text-cyan-600" : "text-gray-700 hover:text-cyan-500"
+                  }`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
+                  <motion.div
+                    layoutId="underline"
+                    className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
+                    animate={{ opacity: activeTab === tab ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Conteúdo das abas animado */}

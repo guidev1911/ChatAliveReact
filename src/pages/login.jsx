@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import bgImage from "../assets/bg-login.jpg"; 
-import PasswordRecovery from "../components/PasswordRecovery";
-import ParticlesBackground from "../components/ParticlesBackground";
-import UserRegister from "../components/UserRegister";
+import PasswordRecovery from "../components/login/PasswordRecovery";
+import ParticlesBackground from "../components/login/ParticlesBackground";
+import UserRegister from "../components/login/UserRegister";
 
 export default function Login() {
   const [formMode, setFormMode] = useState("login");
