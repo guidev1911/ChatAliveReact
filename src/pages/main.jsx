@@ -7,6 +7,7 @@ import MobileSidebarButton from "../components/sideBar/MobileSidebarButton";
 import DesktopSidebar from "../components/sideBar/DesktopSidebar";
 import MobileSidebar from "../components/sideBar/MobileSidebar";
 import TopMenu from "../components/group/TopMenu";
+import Pagination from "../components/group/Pagination";
 
 export default function Main() {
   const [user, setUser] = useState(null);
@@ -186,34 +187,8 @@ export default function Main() {
         </AnimatePresence>
 
         {/* Paginação */}
-        {activeTab === "explorar" && totalPages > 1 && (
-          <div className="flex justify-center mt-6 gap-2">
-            <button
-              onClick={() => setPage((p) => Math.max(p - 1, 0))}
-              disabled={page === 0}
-              className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
-            >
-              ◀
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i)}
-                className={`px-3 py-1 rounded-md transition ${
-                  page === i ? "bg-cyan-600 text-white" : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
-              disabled={page === totalPages - 1}
-              className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
-            >
-              ▶
-            </button>
-          </div>
+        {activeTab === "explorar" && (
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         )}
       </main>
 
