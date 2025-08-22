@@ -6,6 +6,7 @@ import CreateGroupModal from "../components/group/CreateGroupModal";
 import MobileSidebarButton from "../components/sideBar/MobileSidebarButton";
 import DesktopSidebar from "../components/sideBar/DesktopSidebar";
 import MobileSidebar from "../components/sideBar/MobileSidebar";
+import TopMenu from "../components/group/TopMenu";
 
 export default function Main() {
   const [user, setUser] = useState(null);
@@ -120,28 +121,7 @@ export default function Main() {
       />
 
       {/* Menu fixo no topo */}
-      <div className="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md">
-        <div className="max-w-5xl mx-auto flex justify-center items-center gap-6 py-3 relative">
-          {["explorar", "meus", "amigos"].map((tab) => (
-            <button
-              key={tab}
-              className="relative text-base font-semibold px-4 py-2 text-gray-700 hover:text-cyan-500 transition-all duration-300"
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
-              {activeTab === tab && (
-                <motion.div
-                  layoutId="underline"
-                  className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+      <TopMenu activeTab={activeTab} setActiveTab={setActiveTab} />
       
       {/* Conteúdo principal rolável */}
       <main className="flex-1 p-4 md:p-10 bg-white mt-[60px] overflow-y-auto overflow-x-hidden">
