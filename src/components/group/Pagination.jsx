@@ -1,4 +1,3 @@
-// Pagination.jsx
 export default function Pagination({ page, setPage, totalPages }) {
   if (totalPages <= 1) return null;
 
@@ -34,4 +33,3 @@ export default function Pagination({ page, setPage, totalPages }) {
     </div>
   );
 }
-    

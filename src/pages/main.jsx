@@ -8,6 +8,7 @@ import DesktopSidebar from "../components/sideBar/DesktopSidebar";
 import MobileSidebar from "../components/sideBar/MobileSidebar";
 import TopMenu from "../components/group/TopMenu";
 import Pagination from "../components/group/Pagination";
+import GroupSearch from "../components/group/GroupSearch";
 
 export default function Main() {
   const [user, setUser] = useState(null);
@@ -21,6 +22,7 @@ export default function Main() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const backendUrl = "http://192.168.0.11:8080";
 
@@ -29,6 +31,36 @@ export default function Main() {
     localStorage.removeItem("user"); 
     navigate("/");
   };
+
+  useEffect(() => {
+    if (activeTab === "explorar") {
+      async function fetchGroups() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        try {
+          const response = await fetch(
+            `${backendUrl}/groups?page=${page}&size=12&name=${searchQuery}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (!response.ok) throw new Error("Falha ao carregar grupos");
+          const data = await response.json();
+          setGroups(data.content || []);
+          setTotalPages(data.totalPages || 0);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      fetchGroups();
+    }
+  }, [activeTab, page, searchQuery]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [searchQuery]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -57,29 +89,6 @@ export default function Main() {
 
     fetchProfile();
   }, []);
-
-  useEffect(() => {
-    if (activeTab === "explorar") {
-      async function fetchGroups() {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        try {
-          const response = await fetch(`${backendUrl}/groups?page=${page}&size=12`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!response.ok) throw new Error("Falha ao carregar grupos");
-          const data = await response.json();
-          setGroups(data.content || []);
-          setTotalPages(data.totalPages || 0);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      fetchGroups();
-    }
-  }, [activeTab, page]);
 
   if (loading) {
     return (
@@ -123,9 +132,10 @@ export default function Main() {
 
       {/* Menu fixo no topo */}
       <TopMenu activeTab={activeTab} setActiveTab={setActiveTab} />
-      
+
       {/* Conteúdo principal rolável */}
       <main className="flex-1 p-4 md:p-10 bg-white mt-[60px] overflow-y-auto overflow-x-hidden">
+
         <AnimatePresence mode="wait">
           {activeTab === "explorar" && (
             <motion.div
@@ -134,22 +144,28 @@ export default function Main() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+              className="w-full"
             >
-              {groups.map((group) => (
-                <motion.div
-                  key={group.id}
-                  className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white flex flex-col"
-                  whileHover={{ scale: 1.03 }}
-                >
-                  <h3 className="font-bold text-lg text-cyan-600 truncate">{group.name}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3 overflow-hidden">
-                    {group.description}
-                  </p>
-                  <p className="text-gray-400 text-xs mt-2 truncate">Privacidade: {group.privacy}</p>
-                  <p className="text-gray-400 text-xs mt-1 truncate">Criador: {group.creator.name}</p>
-                </motion.div>
-              ))}
+              {/* Barra de pesquisa */}
+              <GroupSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+              {/* Grid de grupos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+                {groups.map((group) => (
+                  <motion.div
+                    key={group.id}
+                    className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white flex flex-col"
+                    whileHover={{ scale: 1.03 }}
+                  >
+                    <h3 className="font-bold text-lg text-cyan-600 truncate">{group.name}</h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 overflow-hidden">
+                      {group.description}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-2 truncate">Privacidade: {group.privacy}</p>
+                    <p className="text-gray-400 text-xs mt-1 truncate">Criador: {group.creator.name}</p>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
 
@@ -190,6 +206,7 @@ export default function Main() {
         {activeTab === "explorar" && (
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         )}
+
       </main>
 
       {/* Modais */}
