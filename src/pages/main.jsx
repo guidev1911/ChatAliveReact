@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import EditProfileModal from "../components/profile/EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,11 +16,13 @@ export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("explorar"); 
   const [groups, setGroups] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   const backendUrl = "http://192.168.0.11:8080";
 
-    const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user"); 
     navigate("/");
@@ -37,9 +39,7 @@ export default function Main() {
 
       try {
         const response = await fetch(`${backendUrl}/user/profile/get`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!response.ok) throw new Error("Falha ao carregar perfil");
@@ -63,14 +63,13 @@ export default function Main() {
         if (!token) return;
 
         try {
-          const response = await fetch(`${backendUrl}/groups`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+          const response = await fetch(`${backendUrl}/groups?page=${page}&size=12`, {
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (!response.ok) throw new Error("Falha ao carregar grupos");
           const data = await response.json();
           setGroups(data.content || []);
+          setTotalPages(data.totalPages || 0);
         } catch (err) {
           console.error(err);
         }
@@ -78,7 +77,7 @@ export default function Main() {
 
       fetchGroups();
     }
-  }, [activeTab]);
+  }, [activeTab, page]);
 
   if (loading) {
     return (
@@ -120,7 +119,7 @@ export default function Main() {
         onLogout={handleLogout}  
       />
 
-      {/* Menu fixo no topo (desktop) */}
+      {/* Menu fixo no topo */}
       <div className="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md">
         <div className="max-w-5xl mx-auto flex justify-center items-center gap-6 py-3 relative">
           {["explorar", "meus", "amigos"].map((tab) => (
@@ -143,33 +142,35 @@ export default function Main() {
           ))}
         </div>
       </div>
-
+      
       {/* Conteúdo principal rolável */}
       <main className="flex-1 p-4 md:p-10 bg-white mt-[60px] overflow-y-auto overflow-x-hidden">
-          <AnimatePresence mode="wait">
-            {activeTab === "explorar" && (
-              <motion.div
-                key="explorar"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-              >
-                {groups.map((group) => (
-                  <motion.div
-                    key={group.id}
-                    className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white"
-                    whileHover={{ scale: 1.03 }}
-                  >
-                    <h3 className="font-bold text-lg text-cyan-600">{group.name}</h3>
-                    <p className="text-gray-600 text-sm">{group.description}</p>
-                    <p className="text-gray-400 text-xs mt-2">Privacidade: {group.privacy}</p>
-                    <p className="text-gray-400 text-xs mt-1">Criador: {group.creator.name}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
+        <AnimatePresence mode="wait">
+          {activeTab === "explorar" && (
+            <motion.div
+              key="explorar"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+            >
+              {groups.map((group) => (
+                <motion.div
+                  key={group.id}
+                  className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white flex flex-col"
+                  whileHover={{ scale: 1.03 }}
+                >
+                  <h3 className="font-bold text-lg text-cyan-600 truncate">{group.name}</h3>
+                  <p className="text-gray-600 text-sm line-clamp-3 overflow-hidden">
+                    {group.description}
+                  </p>
+                  <p className="text-gray-400 text-xs mt-2 truncate">Privacidade: {group.privacy}</p>
+                  <p className="text-gray-400 text-xs mt-1 truncate">Criador: {group.creator.name}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
           {activeTab === "meus" && (
             <motion.div
@@ -203,6 +204,37 @@ export default function Main() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Paginação */}
+        {activeTab === "explorar" && totalPages > 1 && (
+          <div className="flex justify-center mt-6 gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 0))}
+              disabled={page === 0}
+              className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
+            >
+              ◀
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                className={`px-3 py-1 rounded-md transition ${
+                  page === i ? "bg-cyan-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
+              disabled={page === totalPages - 1}
+              className="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
+            >
+              ▶
+            </button>
+          </div>
+        )}
       </main>
 
       {/* Modais */}
@@ -220,5 +252,3 @@ export default function Main() {
     </div>
   );
 }
-
-
