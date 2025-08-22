@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { PersonIcon, GearIcon } from "@radix-ui/react-icons";
+import { PersonIcon, GearIcon, ExitIcon } from "@radix-ui/react-icons";
 
-export default function MobileSidebar({ isOpen, onClose, backendUrl, user, onEdit }) {
+export default function MobileSidebar({ isOpen, onClose, backendUrl, user, onEdit, onLogout }) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -46,7 +46,7 @@ export default function MobileSidebar({ isOpen, onClose, backendUrl, user, onEdi
 
             <button
               onClick={onEdit}
-              className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
+              className="absolute bottom-24 left-4 text-cyan-400 hover:text-cyan-300 transition"
               aria-label="Editar perfil"
               title="Editar perfil"
             >
@@ -54,12 +54,21 @@ export default function MobileSidebar({ isOpen, onClose, backendUrl, user, onEdi
             </button>
 
             <button
-              className="absolute bottom-4 left-4 text-cyan-400 opacity-50 cursor-default"
+              className="absolute bottom-14 left-4 text-cyan-400 opacity-50 cursor-default"
               aria-label="Configurações"
               title="Configurações (sem ação)"
               tabIndex={-1}
             >
               <GearIcon className="w-6 h-6" />
+            </button>
+
+            <button
+              onClick={onLogout}
+              className="absolute bottom-4 left-4 text-red-400 hover:text-red-300 transition"
+              aria-label="Sair"
+              title="Sair"
+            >
+              <ExitIcon className="w-6 h-6" />
             </button>
           </motion.aside>
         </>

@@ -1,6 +1,6 @@
-import { PersonIcon, GearIcon } from "@radix-ui/react-icons";
+import { PersonIcon, GearIcon, ExitIcon } from "@radix-ui/react-icons";
 
-export default function DesktopSidebar({ user, onEdit, backendUrl }) {
+export default function DesktopSidebar({ user, onEdit, backendUrl, onLogout }) {
   return (
     <aside className="hidden md:flex w-80 bg-[#083344] p-6 flex-col border-r border-cyan-700 shadow-lg items-center relative z-50">
       <h1 className="text-3xl font-bold text-cyan-400 mb-10">ChatAlive</h1>
@@ -16,24 +16,35 @@ export default function DesktopSidebar({ user, onEdit, backendUrl }) {
         {user.bio}
       </p>
 
-      <button
-        onClick={onEdit}
-        className="absolute bottom-14 left-4 text-cyan-400 hover:text-cyan-300 transition"
-        aria-label="Editar perfil"
-        title="Editar perfil"
-      >
-        <PersonIcon className="w-6 h-6" />
-      </button>
+      {/* Rodapé com botões */}
+      <div className="absolute bottom-4 left-4 flex flex-col gap-4">
+        <button
+          onClick={onEdit}
+          className="text-cyan-400 hover:text-cyan-300 transition"
+          aria-label="Editar perfil"
+          title="Editar perfil"
+        >
+          <PersonIcon className="w-6 h-6" />
+        </button>
 
-      <button
-        className="absolute bottom-4 left-4 text-cyan-400 opacity-50 cursor-default"
-        aria-label="Configurações"
-        title="Configurações (sem ação)"
-        tabIndex={-1}
-      >
-        <GearIcon className="w-6 h-6" />
-      </button>
+        <button
+          className="text-cyan-400 opacity-50 cursor-default"
+          aria-label="Configurações"
+          title="Configurações (sem ação)"
+          tabIndex={-1}
+        >
+          <GearIcon className="w-6 h-6" />
+        </button>
+
+        <button
+          onClick={onLogout}
+          className="text-red-400 hover:text-red-300 transition"
+          aria-label="Sair"
+          title="Sair"
+        >
+          <ExitIcon className="w-6 h-6" />
+        </button>
+      </div>
     </aside>
   );
 }
-

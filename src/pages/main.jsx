@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EditProfileModal from "../components/profile/EditProfileModal";
 import { motion, AnimatePresence } from "framer-motion";
 import CreateGroupModal from "../components/group/CreateGroupModal";
@@ -15,8 +16,15 @@ export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("explorar"); 
   const [groups, setGroups] = useState([]);
+  const navigate = useNavigate();
 
   const backendUrl = "http://192.168.0.11:8080";
+
+    const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user"); 
+    navigate("/");
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -95,10 +103,11 @@ export default function Main() {
       <MobileSidebarButton onClick={() => setSidebarOpen(true)} />
 
       {/* Sidebar desktop */}
-      <DesktopSidebar 
-        user={user} 
-        backendUrl={backendUrl} 
-        onEdit={() => setIsModalOpen(true)} 
+      <DesktopSidebar
+        user={user}
+        backendUrl={backendUrl}
+        onEdit={() => setIsModalOpen(true)}
+        onLogout={handleLogout}  
       />
 
       {/* Sidebar mobile animada */}
@@ -108,6 +117,7 @@ export default function Main() {
         user={user} 
         backendUrl={backendUrl} 
         onEdit={() => setIsModalOpen(true)} 
+        onLogout={handleLogout}  
       />
 
       {/* Conteúdo principal */}
