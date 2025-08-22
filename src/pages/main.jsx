@@ -97,7 +97,7 @@ export default function Main() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#0f4c5c] text-gray-100 relative">
+    <div className="flex min-h-screen bg-[#0f4c5c] text-gray-100 relative">
 
       {/* Botão mobile */}
       <MobileSidebarButton onClick={() => setSidebarOpen(true)} />
@@ -110,7 +110,7 @@ export default function Main() {
         onLogout={handleLogout}  
       />
 
-      {/* Sidebar mobile animada */}
+      {/* Sidebar mobile */}
       <MobileSidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
@@ -120,92 +120,90 @@ export default function Main() {
         onLogout={handleLogout}  
       />
 
-      {/* Conteúdo principal */}
-        <main className="flex-1 p-6 md:p-10 bg-white transition-all duration-300">
-          {/* Menu de abas com animação de underline */}
-          <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-300 shadow-sm mb-6">
-            <div className="flex justify-center gap-2 sm:gap-8 py-3 relative">
-              {["explorar", "meus", "amigos"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`relative text-sm sm:text-base font-semibold px-2 py-1 transition-all duration-300 ${
-                    activeTab === tab ? "text-cyan-600" : "text-gray-700 hover:text-cyan-500"
-                  }`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
+      {/* Menu fixo no topo (desktop) */}
+      <div className="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md">
+        <div className="max-w-5xl mx-auto flex justify-center items-center gap-6 py-3 relative">
+          {["explorar", "meus", "amigos"].map((tab) => (
+            <button
+              key={tab}
+              className="relative text-base font-semibold px-4 py-2 text-gray-700 hover:text-cyan-500 transition-all duration-300"
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === "explorar" ? "Explorar" : tab === "meus" ? "Meus Grupos" : "Amigos"}
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Conteúdo principal rolável */}
+      <main className="flex-1 p-4 md:p-10 bg-white mt-[60px] overflow-y-auto overflow-x-hidden">
+          <AnimatePresence mode="wait">
+            {activeTab === "explorar" && (
+              <motion.div
+                key="explorar"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+              >
+                {groups.map((group) => (
                   <motion.div
-                    layoutId="underline"
-                    className="absolute left-0 bottom-0 w-full h-0.5 bg-cyan-600 rounded"
-                    animate={{ opacity: activeTab === tab ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Conteúdo das abas animado */}
-          <div className="w-full h-full relative min-h-[300px]">
-            <AnimatePresence mode="wait">
-              {activeTab === "explorar" && (
-                <motion.div
-                  key="explorar"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-                >
-                  {groups.map((group) => (
-                    <motion.div
-                      key={group.id}
-                      className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white"
-                      whileHover={{ scale: 1.03 }}
-                    >
-                      <h3 className="font-bold text-lg text-cyan-600">{group.name}</h3>
-                      <p className="text-gray-600 text-sm">{group.description}</p>
-                      <p className="text-gray-400 text-xs mt-2">Privacidade: {group.privacy}</p>
-                      <p className="text-gray-400 text-xs mt-1">Criador: {group.creator.name}</p>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-
-              {activeTab === "meus" && (
-                <motion.div
-                  key="meus"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center justify-center gap-6"
-                >
-                  <button
-                    onClick={() => setIsCreateGroupOpen(true)}
-                    className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-lg transition"
+                    key={group.id}
+                    className="border p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer bg-white"
+                    whileHover={{ scale: 1.03 }}
                   >
-                    ➕ Criar Grupo
-                  </button>
-                  <p className="text-gray-500 text-sm mt-2">Você ainda não entrou em nenhum grupo.</p>
-                </motion.div>
-              )}
+                    <h3 className="font-bold text-lg text-cyan-600">{group.name}</h3>
+                    <p className="text-gray-600 text-sm">{group.description}</p>
+                    <p className="text-gray-400 text-xs mt-2">Privacidade: {group.privacy}</p>
+                    <p className="text-gray-400 text-xs mt-1">Criador: {group.creator.name}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
 
-              {activeTab === "amigos" && (
-                <motion.div
-                  key="amigos"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center justify-center gap-6"
-                >
-                  <p className="text-gray-500 text-sm mt-2">Seus amigos aparecerão aqui em breve.</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </main>
+          {activeTab === "meus" && (
+            <motion.div
+              key="meus"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center justify-center gap-6"
+            >
+              <button
+                onClick={() => setIsCreateGroupOpen(true)}
+                className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold shadow-lg transition"
+              >
+                ➕ Criar Grupo
+              </button>
+              <p className="text-gray-500 text-sm mt-2">Você ainda não entrou em nenhum grupo.</p>
+            </motion.div>
+          )}
+
+          {activeTab === "amigos" && (
+            <motion.div
+              key="amigos"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center justify-center gap-6"
+            >
+              <p className="text-gray-500 text-sm mt-2">Seus amigos aparecerão aqui em breve.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
 
       {/* Modais */}
       <CreateGroupModal

@@ -20,7 +20,7 @@ export default function MobileSidebar({ isOpen, onClose, backendUrl, user, onEdi
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 left-0 bottom-0 w-72 bg-[#083344] p-6 flex flex-col border-r border-cyan-700 shadow-lg items-center z-50 md:hidden"
+            className="fixed top-0 left-0 bottom-0 w-72 bg-[#083344] p-6 flex flex-col border-r border-cyan-700 shadow-lg items-center z-50 overflow-y-auto md:hidden"
           >
             <button
               onClick={onClose}
